@@ -2,11 +2,10 @@
 " Author: Name5566 <name5566@gmail.com>
 " Version: 0.1.1
 
-if exists('g:loaded_starsearch')
+if exists('loaded_starsearch')
 	finish
-else
-  let g:loaded_starsearch = 1
 endif
+let loaded_starsearch = 1
 
 let s:savedCpo = &cpo
 set cpo&vim
@@ -19,11 +18,13 @@ function! s:VStarsearch_searchCWord()
 		echohl NONE
 		return
 	endif
-
+	
 	if wordStr[0] =~ '\<'
 		let @/ = '\<' . wordStr . '\>'
+        call histadd('search', '\<' . wordStr . '\>') " add to search history
 	else
 		let @/ = wordStr
+        call histadd('search', wordStr) " add to search history
 	endif
 
 	let savedUnnamed = @"
@@ -42,6 +43,7 @@ function! s:VStarsearch_searchVWord()
 	let savedS = @s
 	normal! gv"sy
 	let @/ = '\V' . substitute(escape(@s, '\'), '\n', '\\n', 'g')
+    call histadd('search', '\V' . substitute(escape(@s, '\'), '\n', '\\n', 'g')) " add to search history
 	let @s = savedS
 	let @" = savedUnnamed
 endfunction
